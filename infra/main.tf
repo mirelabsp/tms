@@ -85,7 +85,7 @@ resource "aws_db_instance" "tms_database" {
   identifier           = "tms-database"
   instance_class       = "db.t3.micro"
   engine               = "postgres"
-  engine_version       = "15" # CORRIGIDO: Usando a versão principal
+  engine_version       = "15.14" # CORRIGIDO: Usando a versão principal
   port                 = 5432
   allocated_storage    = 20
   db_name              = "tmsdb"
@@ -363,4 +363,11 @@ resource "aws_security_group" "tms_ecs_sg" {
     protocol    = "-1"
     cidr_blocks = ["0.0.0.0/0"]
   }
+}
+
+# Anexa a política de leitura de segredos TAMBÉM à Task Execution Role.
+# Isso é necessário para que o ECS consiga buscar os segredos ANTES de iniciar o container.
+resource "aws_iam_role_policy_attachment" "ecs_task_execution_role_secrets_policy" {
+  role       = aws_iam_role.ecs_task_execution_role.name
+  policy_arn = aws_iam_policy.secrets_manager_read_policy.arn
 }
