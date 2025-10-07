@@ -61,3 +61,13 @@ def atualizar_veiculo(veiculo_id: int, veiculo_atualizado: Veiculo, session: Ses
     session.commit()
     session.refresh(veiculo)
     return veiculo
+
+# ROTA: Deletar veículo
+@app.delete("/veiculos/{veiculo_id}")
+def deletar_veiculo(veiculo_id: int, session: Session = Depends(get_session)):
+    veiculo = session.get(Veiculo, veiculo_id)
+    if not veiculo:
+        raise HTTPException(status_code=404, detail="Veículo não encontrado")
+    session.delete(veiculo)
+    session.commit()
+    return {"ok": True, "mensagem": f"Veículo {veiculo_id} removido com sucesso."}
