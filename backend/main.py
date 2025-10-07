@@ -4,8 +4,19 @@ from datetime import datetime
 from sqlmodel import Field, SQLModel, Session, create_engine, select
 from fastapi import FastAPI, Depends, HTTPException
 
-# --- CONFIGURAÇÃO DO BANCO DE DADOS ---
-DATABASE_URL = os.getenv("DATABASE_URL", "postgresql://postgres:postgres@db:5432/tmsdb")
+# --- CONFIGURAÇÃO DO BANCO DE DADOS (VERSÃO CORRIGIDA) ---
+# Constrói a URL de conexão a partir das variáveis de ambiente injetadas pelo ECS.
+# Se a DATABASE_URL já existir (ambiente local com docker-compose), a usa diretamente.
+if "DATABASE_URL" in os.environ:
+    DATABASE_URL = os.getenv("DATABASE_URL")
+else:
+    DB_USER = os.getenv("DB_USER", "postgres")
+    DB_PASSWORD = os.getenv("DB_PASSWORD", "postgres")
+    DB_HOST = os.getenv("DB_HOST", "db")
+    DB_PORT = os.getenv("DB_PORT", 5432)
+    DB_NAME = os.getenv("DB_NAME", "tmsdb")
+    DATABASE_URL = f"postgresql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
+
 engine = create_engine(DATABASE_URL, echo=True)
 
 
@@ -35,9 +46,8 @@ class Rota(SQLModel, table=True):
 class Entrega(SQLModel, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
     descricao: str
-    status: str = "pendente"  # Ex: pendente, em_transito, entregue, cancelada
+    status: str = "pendente"
 
-    # Relacionamentos com outras tabelas
     veiculo_id: Optional[int] = Field(default=None, foreign_key="veiculo.id")
     motorista_id: Optional[int] = Field(default=None, foreign_key="motorista.id")
     rota_id: Optional[int] = Field(default=None, foreign_key="rota.id")
@@ -49,6 +59,10 @@ def create_db_and_tables():
     SQLModel.metadata.create_all(engine)
 
 app = FastAPI(title="TMS API - Gestão de Transporte")
+
+@app.get("/", tags=["Health Check"])
+def health_check():
+    return {"status": "ok"}
 
 def get_session():
     with Session(engine) as session:
