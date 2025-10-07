@@ -126,5 +126,7 @@ A **Fase 2** do projeto levará o TMS para a nuvem, utilizando serviços AWS:
 ## 👩‍💻 Autoria
 
 Desenvolvido por **Mirela Santana** 💜
+
 Foco em **DevOps | Cloud | Backend Python**
+
 📦 GitHub: [mirelabsp](https://github.com/mirelabsp)
