@@ -1,3 +1,10 @@
 .terraform/
 terraform.tfstate
 terraform.tfstate.backup
+# Local Terraform directories and state files
+.terraform/
+terraform.tfstate
+terraform.tfstate.backup
+
+# Arquivos de variáveis do Terraform
+*.tfvars
