@@ -1,132 +1,156 @@
+-----
 
 # 🚛 TMS — Transport Management System
 
-**TMS (Transport Management System)** é uma API simples de **gestão de transportes**, desenvolvida com **FastAPI**, **SQLModel** e **PostgreSQL**, com containers orquestrados via **Docker Compose**.
-O projeto faz parte de um estudo prático de **DevOps + Desenvolvimento Backend com Python**, com posterior integração à **AWS**.
+Projeto **Full-Stack** de um Sistema de Gestão de Transportes (TMS) com deploy automatizado na nuvem da AWS. A aplicação foi desenvolvida com foco em boas práticas de DevOps, utilizando Infraestrutura como Código (IaC) com Terraform e um pipeline de Integração e Deploy Contínuo (CI/CD) com GitHub Actions.
+
+O backend é uma API REST construída com Python/FastAPI e o frontend é uma interface reativa desenvolvida com React.
+
+## ☁️ Arquitetura na AWS
+
+A aplicação roda em uma arquitetura serverless e escalável na AWS, totalmente provisionada via Terraform:
+
+  * **Pipeline CI/CD:** O **GitHub Actions** é responsável por construir a imagem Docker da aplicação e publicá-la no ECR a cada `push` na branch `main`.
+  * **Frontend:** A aplicação React é hospedada como um site estático em um bucket **S3**, com distribuição global e HTTPS através do **CloudFront (CDN)**.
+  * **Backend:** A API REST em Python/FastAPI roda como um contêiner no **ECS Fargate**, uma tecnologia serverless que gerencia a execução e escalabilidade da aplicação sem a necessidade de provisionar servidores.
+  * **Roteamento e Acesso:** Um **Application Load Balancer (ALB)** recebe o tráfego da internet e o distribui de forma segura para os contêineres da aplicação, que rodam em uma rede privada.
+  * **Dados e Persistência:** Um banco de dados **PostgreSQL**, rodando no serviço gerenciado **RDS**, armazena todos os dados da aplicação em uma sub-rede privada e segura.
+  * **Segurança:** As credenciais do banco de dados são armazenadas de forma segura no **AWS Secrets Manager**, e as permissões de acesso são rigorosamente controladas através de políticas no **IAM**.
+  * **Rede:** Toda a infraestrutura reside em uma **VPC** customizada, com sub-redes públicas para recursos expostos à internet (como o ALB) e sub-redes privadas para proteger o backend e o banco de dados.
 
 ## 🧩 Funcionalidades
 
-| Recurso       | Descrição                                              |
-| ------------- | ------------------------------------------------------ |
-| 🚗 Veículos   | Cadastro, listagem, atualização e exclusão de veículos |
-| 👷 Motoristas | (em desenvolvimento)                                   |
-| 🗺️ Rotas     | (em desenvolvimento)                                   |
-| 📦 Entregas   | (em desenvolvimento)                                   |
-
----
+| Recurso | Backend (API) | Frontend |
+| :--- | :---: | :---: |
+| 🚗 **Veículos** | ✅ CRUD Completo | ✅ Listagem |
+| 👷 **Motoristas** | ✅ CRUD Completo | 🚧 Em desenvolvimento |
+| 🗺️ **Rotas** | ✅ CRUD Completo | 🚧 Em desenvolvimento |
+| 📦 **Entregas** | ✅ CRUD Completo | 🚧 Em desenvolvimento |
 
 ## ⚙️ Tecnologias Utilizadas
 
-* **Python 3.11**
-* **FastAPI**
-* **SQLModel**
-* **PostgreSQL**
-* **Docker & Docker Compose**
-* **Uvicorn**
-* **Git & GitHub**
+#### Backend
 
----
+  * Python 3.11
+  * FastAPI
+  * SQLModel (ORM)
+
+#### Frontend
+
+  * React
+  * Vite
+  * Axios
+
+#### Infraestrutura & DevOps (IaC & CI/CD)
+
+  * Terraform
+  * Docker & Docker Compose
+  * GitHub Actions
+
+#### Cloud (AWS)
+
+  * **Computação:** ECS Fargate
+  * **Rede:** VPC, Application Load Balancer (ALB), Route 53
+  * **Armazenamento:** RDS (PostgreSQL), S3, ECR
+  * **Segurança:** IAM, Secrets Manager, ACM (Certificate Manager)
+  * **Monitoramento:** CloudWatch
 
 ## 🧱 Estrutura do Projeto
 
 ```
 tms/
-├─ backend/
-│  ├─ main.py               # Código principal da API
-│  ├─ requirements.txt      # Dependências Python
-│  ├─ Dockerfile            # Build da imagem da API
+├─ .github/workflows/      # Pipeline de CI/CD com GitHub Actions
+│  └─ ci.yml
+├─ backend/                # Código da API em Python/FastAPI
+│  ├─ main.py
+│  ├─ Dockerfile
 │  └─ ...
-├─ docker-compose.yml       # Orquestra containers (API + DB)
-└─ README.md                # Documentação do projeto
+├─ frontend/               # Código da interface em React
+│  ├─ src/
+│  └─ ...
+├─ infra/                  # Código da Infraestrutura (Terraform)
+│  ├─ main.tf
+│  └─ variables.tf
+├─ docker-compose.yml      # Orquestra os containers para ambiente local
+└─ README.md
 ```
 
----
+## 🚀 Como Executar o Projeto
 
-## 🚀 Como Rodar Localmente
+### Rodando Localmente
 
-### 🔧 Pré-requisitos
+O ambiente local simula a arquitetura da nuvem usando Docker Compose.
 
-* Docker e Docker Compose instalados
-  (verifique com `docker --version` e `docker compose version`)
-
-### ▶️ Passos para executar
+**1. Subir o Backend e o Banco de Dados:**
 
 ```bash
-# Clone o repositório
-git clone https://github.com/mirelabsp/tms.git
-cd tms
-
-# Suba os containers
+# Na pasta raiz do projeto (tms/)
 docker compose up --build
 ```
 
-A API ficará disponível em:
-👉 **[http://localhost:8080](http://localhost:8080)**
+  * A API estará disponível em: `http://localhost:8080`
+  * A documentação interativa (Swagger) em: `http://localhost:8080/docs`
 
-E o banco de dados PostgreSQL em:
-👉 **localhost:5432**
-
----
-
-## 🧠 Endpoints da API
-
-| Método     | Endpoint         | Descrição                      |
-| ---------- | ---------------- | ------------------------------ |
-| **POST**   | `/veiculos/`     | Criar um novo veículo          |
-| **GET**    | `/veiculos/`     | Listar todos os veículos       |
-| **PUT**    | `/veiculos/{id}` | Atualizar um veículo existente |
-| **DELETE** | `/veiculos/{id}` | Remover um veículo do sistema  |
-
-### 🧪 Exemplo de criação via `curl`:
+**2. Subir o Frontend:**
 
 ```bash
-curl -X POST "http://localhost:8080/veiculos/" \
--H "Content-Type: application/json" \
--d '{"placa":"ABC1234","modelo":"VW Cargo","capacidade":2.5}'
+# Em outro terminal, navegue até a pasta do frontend
+cd tms-frontend
+
+# Instale as dependências (apenas na primeira vez)
+npm install
+
+# Inicie o servidor de desenvolvimento
+npm run dev
 ```
 
-### 🔍 Testar via Swagger UI:
+  * O frontend estará disponível em: `http://localhost:5173` (ou a porta indicada no terminal)
 
-👉 [http://localhost:8080/docs](http://localhost:8080/docs)
+### Deploy na AWS
 
----
-
-## 🌩️ Próxima Fase — Integração com AWS
-
-A **Fase 2** do projeto levará o TMS para a nuvem, utilizando serviços AWS:
-
-| Serviço AWS                          | Uso planejado                                     |
-| ------------------------------------ | ------------------------------------------------- |
-| **ECS (Elastic Container Service)**  | Deploy dos containers da API                      |
-| **ECR (Elastic Container Registry)** | Armazenar as imagens Docker                       |
-| **RDS (PostgreSQL)**                 | Banco de dados gerenciado                         |
-| **CloudWatch**                       | Logs e monitoramento                              |
-| **S3**                               | Armazenamento de relatórios e exportações futuras |
-| **IAM**                              | Controle de permissões e credenciais              |
-| **CodePipeline + CodeBuild**         | Automação de CI/CD                                |
-
-🚀 O objetivo final é ter o **TMS rodando 100% em nuvem**, com versionamento contínuo e observabilidade.
-
----
+Toda a infraestrutura é gerenciada pelo Terraform na pasta `infra/`. O deploy da aplicação é automatizado: um `git push` para a branch `main` ativa o pipeline do GitHub Actions, que constrói e publica a nova imagem da API no ECR. O serviço ECS pode então ser atualizado para usar a nova imagem.
 
 ## 📅 Roadmap do Projeto
 
-* [x] CRUD de veículos (Create e Read)
-* [x] Endpoint de atualização (Update)
-* [x] Endpoint de exclusão (Delete)
-* [ ] CRUD de motoristas
-* [ ] CRUD de rotas e entregas
-* [ ] Deploy automatizado na AWS ECS
-* [ ] Integração com AWS RDS
-* [ ] Monitoramento com CloudWatch
-* [ ] CI/CD com GitHub Actions + AWS CodePipeline
+### ✅ Fase 1: API e Ambiente Local
 
----
+  - [x] CRUD de Veículos (Create, Read, Update, Delete)
+  - [x] CRUD de Motoristas
+  - [x] CRUD de Rotas e Entregas
+  - [x] Conteinerização da API com Docker
+
+### ✅ Fase 2: Infraestrutura na AWS e CI/CD
+
+  - [x] **CI/CD com GitHub Actions:** Pipeline que constrói e envia a imagem para o ECR.
+  - [x] **Infraestrutura como Código (Terraform):**
+      - [x] Rede segura (VPC com sub-redes públicas e privadas)
+      - [x] Banco de dados gerenciado (Integração com AWS RDS)
+      - [x] Registro de contêiner privado (ECR)
+      - [x] Gerenciamento de segredos (Secrets Manager)
+  - [x] **Deploy da API na AWS ECS:**
+      - [x] Configuração do Cluster, Task Definition e Service
+      - [x] Publicação da API na internet via Application Load Balancer
+
+### 🚧 Fase 3: Frontend e UI
+
+  - [x] **Estrutura do Frontend:** Projeto React criado e rodando localmente.
+  - [x] **Integração com Backend:** Frontend consumindo dados da API na AWS.
+  - [ ] Criação das telas de Motoristas, Rotas e Entregas.
+  - [ ] Implementação de formulários para Criar e Editar dados.
+  - [ ] Deploy do Frontend na AWS (S3 + CloudFront).
+
+### ⏳ Próximos Passos e Melhorias
+
+  - [ ] **Monitoramento com CloudWatch:** Criar dashboards e alarmes para a saúde da aplicação.
+  - [ ] **Segurança HTTPS:** Adicionar certificado SSL no Load Balancer.
+  - [ ] **Domínio Personalizado:** Configurar um domínio próprio com Route 53.
+  - [ ] **Testes Automatizados:** Adicionar `pytest` ao pipeline de CI/CD para garantir a qualidade do código.
+  - [ ] **Autenticação de Usuários:** Implementar login na API e no frontend.
 
 ## 👩‍💻 Autoria
 
 Desenvolvido por **Mirela Santana** 💜
 
-Foco em **DevOps | Cloud | Backend Python**
+Foco em DevOps | Cloud | Backend Python
 
-📦 GitHub: [mirelabsp](https://github.com/mirelabsp)
+📦 GitHub: [mirelabsp](https://www.google.com/search?q=https://github.com/mirelabsp)
