@@ -1,31 +1,35 @@
-🚛 TMS — Transport Management System
 
-TMS (Transport Management System) é uma API simples de gestão de transportes, desenvolvida com FastAPI, SQLModel e PostgreSQL, com containers orquestrados via Docker Compose.
-O projeto faz parte de um estudo prático de DevOps + Desenvolvimento Backend com Python, com posterior integração à AWS.
+# 🚛 TMS — Transport Management System
 
-🧩 Funcionalidades
-Recurso	Descrição
-🚗 Veículos	Cadastro, listagem, atualização e exclusão de veículos
-👷 Motoristas	(em desenvolvimento)
-🗺️ Rotas	(em desenvolvimento)
-📦 Entregas	(em desenvolvimento)
-⚙️ Tecnologias Utilizadas
+**TMS (Transport Management System)** é uma API simples de **gestão de transportes**, desenvolvida com **FastAPI**, **SQLModel** e **PostgreSQL**, com containers orquestrados via **Docker Compose**.
+O projeto faz parte de um estudo prático de **DevOps + Desenvolvimento Backend com Python**, com posterior integração à **AWS**.
 
-Python 3.11
+## 🧩 Funcionalidades
 
-FastAPI
+| Recurso       | Descrição                                              |
+| ------------- | ------------------------------------------------------ |
+| 🚗 Veículos   | Cadastro, listagem, atualização e exclusão de veículos |
+| 👷 Motoristas | (em desenvolvimento)                                   |
+| 🗺️ Rotas     | (em desenvolvimento)                                   |
+| 📦 Entregas   | (em desenvolvimento)                                   |
 
-SQLModel
+---
 
-PostgreSQL
+## ⚙️ Tecnologias Utilizadas
 
-Docker & Docker Compose
+* **Python 3.11**
+* **FastAPI**
+* **SQLModel**
+* **PostgreSQL**
+* **Docker & Docker Compose**
+* **Uvicorn**
+* **Git & GitHub**
 
-Uvicorn
+---
 
-Git & GitHub
+## 🧱 Estrutura do Projeto
 
-🧱 Estrutura do Projeto
+```
 tms/
 ├─ backend/
 │  ├─ main.py               # Código principal da API
@@ -34,80 +38,93 @@ tms/
 │  └─ ...
 ├─ docker-compose.yml       # Orquestra containers (API + DB)
 └─ README.md                # Documentação do projeto
+```
 
-🚀 Como Rodar Localmente
-🔧 Pré-requisitos
+---
 
-Docker e Docker Compose instalados
-(verifique com docker --version e docker compose version)
+## 🚀 Como Rodar Localmente
 
-▶️ Passos para executar
+### 🔧 Pré-requisitos
+
+* Docker e Docker Compose instalados
+  (verifique com `docker --version` e `docker compose version`)
+
+### ▶️ Passos para executar
+
+```bash
 # Clone o repositório
 git clone https://github.com/mirelabsp/tms.git
 cd tms
 
 # Suba os containers
 docker compose up --build
-
+```
 
 A API ficará disponível em:
-👉 http://localhost:8080
+👉 **[http://localhost:8080](http://localhost:8080)**
 
 E o banco de dados PostgreSQL em:
-👉 localhost:5432
+👉 **localhost:5432**
 
-🧠 Endpoints da API
-Método	Endpoint	Descrição
-POST	/veiculos/	Criar um novo veículo
-GET	/veiculos/	Listar todos os veículos
-PUT	/veiculos/{id}	Atualizar um veículo existente
-DELETE	/veiculos/{id}	Remover um veículo do sistema
-🧪 Exemplo de criação via curl:
+---
+
+## 🧠 Endpoints da API
+
+| Método     | Endpoint         | Descrição                      |
+| ---------- | ---------------- | ------------------------------ |
+| **POST**   | `/veiculos/`     | Criar um novo veículo          |
+| **GET**    | `/veiculos/`     | Listar todos os veículos       |
+| **PUT**    | `/veiculos/{id}` | Atualizar um veículo existente |
+| **DELETE** | `/veiculos/{id}` | Remover um veículo do sistema  |
+
+### 🧪 Exemplo de criação via `curl`:
+
+```bash
 curl -X POST "http://localhost:8080/veiculos/" \
 -H "Content-Type: application/json" \
 -d '{"placa":"ABC1234","modelo":"VW Cargo","capacidade":2.5}'
+```
 
-🔍 Testar via Swagger UI:
+### 🔍 Testar via Swagger UI:
 
-👉 http://localhost:8080/docs
+👉 [http://localhost:8080/docs](http://localhost:8080/docs)
 
-🌩️ Próxima Fase — Integração com AWS
+---
 
-A Fase 2 do projeto levará o TMS para a nuvem, utilizando serviços AWS:
+## 🌩️ Próxima Fase — Integração com AWS
 
-Serviço AWS	Uso planejado
-ECS (Elastic Container Service)	Deploy dos containers da API
-ECR (Elastic Container Registry)	Armazenar as imagens Docker
-RDS (PostgreSQL)	Banco de dados gerenciado
-CloudWatch	Logs e monitoramento
-S3	Armazenamento de relatórios e exportações futuras
-IAM	Controle de permissões e credenciais
-CodePipeline + CodeBuild	Automação de CI/CD
+A **Fase 2** do projeto levará o TMS para a nuvem, utilizando serviços AWS:
 
-🚀 O objetivo final é ter o TMS rodando 100% em nuvem, com versionamento contínuo e observabilidade.
+| Serviço AWS                          | Uso planejado                                     |
+| ------------------------------------ | ------------------------------------------------- |
+| **ECS (Elastic Container Service)**  | Deploy dos containers da API                      |
+| **ECR (Elastic Container Registry)** | Armazenar as imagens Docker                       |
+| **RDS (PostgreSQL)**                 | Banco de dados gerenciado                         |
+| **CloudWatch**                       | Logs e monitoramento                              |
+| **S3**                               | Armazenamento de relatórios e exportações futuras |
+| **IAM**                              | Controle de permissões e credenciais              |
+| **CodePipeline + CodeBuild**         | Automação de CI/CD                                |
 
-📅 Roadmap do Projeto
+🚀 O objetivo final é ter o **TMS rodando 100% em nuvem**, com versionamento contínuo e observabilidade.
 
- CRUD de veículos (Create e Read)
+---
 
- Endpoint de atualização (Update)
+## 📅 Roadmap do Projeto
 
- Endpoint de exclusão (Delete)
+* [x] CRUD de veículos (Create e Read)
+* [x] Endpoint de atualização (Update)
+* [x] Endpoint de exclusão (Delete)
+* [ ] CRUD de motoristas
+* [ ] CRUD de rotas e entregas
+* [ ] Deploy automatizado na AWS ECS
+* [ ] Integração com AWS RDS
+* [ ] Monitoramento com CloudWatch
+* [ ] CI/CD com GitHub Actions + AWS CodePipeline
 
- CRUD de motoristas
+---
 
- CRUD de rotas e entregas
+## 👩‍💻 Autoria
 
- Deploy automatizado na AWS ECS
-
- Integração com AWS RDS
-
- Monitoramento com CloudWatch
-
- CI/CD com GitHub Actions + AWS CodePipeline
-
-👩‍💻 Autoria
-
-Desenvolvido por Mirela Santana 💜
-Foco em DevOps | Cloud | Backend Python
-📦 GitHub: mirelabsp
+Desenvolvido por **Mirela Santana** 💜
+Foco em **DevOps | Cloud | Backend Python**
+📦 GitHub: [mirelabsp](https://github.com/mirelabsp)
