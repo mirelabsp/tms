@@ -71,3 +71,52 @@ def deletar_veiculo(veiculo_id: int, session: Session = Depends(get_session)):
     session.delete(veiculo)
     session.commit()
     return {"ok": True, "mensagem": f"Veículo {veiculo_id} removido com sucesso."}
+
+# MODELO MOTORISTA
+class Motorista(SQLModel, table=True):
+    id: Optional[int] = Field(default=None, primary_key=True)
+    nome: str
+    cpf: str
+    habilitacao: str
+    status: str = "ativo"
+
+# --- ROTAS MOTORISTAS ---
+
+# ROTA: Criar motorista
+@app.post("/motoristas/", response_model=Motorista)
+def criar_motorista(motorista: Motorista, session: Session = Depends(get_session)):
+    session.add(motorista)
+    session.commit()
+    session.refresh(motorista)
+    return motorista
+
+# ROTA: Listar motoristas
+@app.get("/motoristas/", response_model=List[Motorista])
+def listar_motoristas(session: Session = Depends(get_session)):
+    return session.exec(select(Motorista)).all()
+
+# ROTA: Atualizar motorista
+@app.put("/motoristas/{motorista_id}", response_model=Motorista)
+def atualizar_motorista(motorista_id: int, motorista_atualizado: Motorista, session: Session = Depends(get_session)):
+    motorista = session.get(Motorista, motorista_id)
+    if not motorista:
+        raise HTTPException(status_code=404, detail="Motorista não encontrado")
+
+    motorista_data = motorista_atualizado.model_dump(exclude_unset=True)
+    for key, value in motorista_data.items():
+        setattr(motorista, key, value)
+
+    session.add(motorista)
+    session.commit()
+    session.refresh(motorista)
+    return motorista
+
+# ROTA: Deletar motorista
+@app.delete("/motoristas/{motorista_id}")
+def deletar_motorista(motorista_id: int, session: Session = Depends(get_session)):
+    motorista = session.get(Motorista, motorista_id)
+    if not motorista:
+        raise HTTPException(status_code=404, detail="Motorista não encontrado")
+    session.delete(motorista)
+    session.commit()
+    return {"ok": True, "mensagem": f"Motorista {motorista_id} removido com sucesso."}
